@@ -41,6 +41,14 @@ export class AwdInstaller {
         env: installEnv
       });
       
+      // Add AWD to PATH if it's not already there
+      const awdPath = process.env.HOME + '/.awd/bin';
+      if (process.env.PATH && !process.env.PATH.includes(awdPath)) {
+        process.env.PATH = `${awdPath}:${process.env.PATH}`;
+        core.addPath(awdPath);
+        core.info(`📍 Added ${awdPath} to PATH`);
+      }
+      
       // Verify installation
       const verifyResult = await exec.exec('awd', ['--version'], {
         ignoreReturnCode: true
@@ -76,6 +84,10 @@ export class AwdInstaller {
       
       if (result === 0) {
         core.info('✅ Runtime setup completed');
+        
+        // Temporary workaround: Add AWD runtime directory to PATH for this session
+        // TODO: Remove this once https://github.com/danielmeppiel/awd-cli/issues/XXX is fixed
+        await this.addAwdRuntimeToPath();
       } else {
         core.warning('⚠️  Runtime setup had issues but continuing...');
       }
@@ -84,6 +96,27 @@ export class AwdInstaller {
       const message = error instanceof Error ? error.message : String(error);
       core.warning(`Runtime setup warning: ${message}`);
       // Don't fail the action for runtime setup issues
+    }
+  }
+
+  /**
+   * Temporary workaround: Add AWD runtime directory to PATH for the current session
+   * This fixes the issue where runtime binaries aren't available immediately after setup
+   * TODO: Remove this once AWD-CLI properly updates PATH in current session
+   */
+  private async addAwdRuntimeToPath(): Promise<void> {
+    try {
+      const awdRuntimePath = process.env.HOME + '/.awd/runtimes';
+      
+      // Add to current process PATH
+      if (process.env.PATH && !process.env.PATH.includes(awdRuntimePath)) {
+        process.env.PATH = `${awdRuntimePath}:${process.env.PATH}`;
+        core.addPath(awdRuntimePath);
+        core.info(`📍 Added ${awdRuntimePath} to PATH for runtime binaries`);
+      }
+      
+    } catch (error) {
+      core.warning(`Could not update PATH for AWD runtime: ${error}`);
     }
   }
 }
