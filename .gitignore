@@ -5,9 +5,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build outputs
-dist/
 build/
 *.tgz
+# Note: dist/ is NOT ignored for GitHub Actions - it contains required compiled code
 
 # Runtime data
 pids
@@ -76,7 +76,7 @@ jspm_packages/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# Note: dist/ is committed for GitHub Actions
 
 # Gatsby files
 .cache/
