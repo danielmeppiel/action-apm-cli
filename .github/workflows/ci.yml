@@ -28,8 +28,37 @@ jobs:
     - name: Check build
       run: npm run build
 
-  build:
+  # Integration test - Test the action itself
+  integration-test:
     needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js (for building action)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies and build
+      run: |
+        npm ci
+        npm run build
+    
+    # One test to rule them all: debug mode + parameters + dependency installation
+    - name: Test - Complete Integration
+      uses: ./  # Use the local action code
+      with:
+        script: test-all
+        working-directory: examples/test-project
+        name: "GitHub Actions"
+        message: "Integration test successful"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    needs: [test, integration-test]  # Wait for both test and integration-test
     if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
@@ -54,3 +83,25 @@ jobs:
         git add dist/
         git commit -m "Build for release ${{ github.ref_name }}" || exit 0
         git push
+
+  # Post-release validation - Test the actual published action
+  post-release-test:
+    needs: build
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Wait for action to be available
+      run: sleep 30  # Give GitHub time to make the tag available
+    
+    - name: Checkout for test project
+      uses: actions/checkout@v4
+    
+    - name: Test published action
+      uses: danielmeppiel/action-awd-cli@${{ github.ref_name }}
+      with:
+        script: test-params
+        working-directory: examples/test-project
+        name: "Published Action"
+        message: "Post-release validation successful"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -4,6 +4,22 @@ This directory contains real-world examples of AI workflows using the AWD Action
 
 ## Quick Start Examples
 
+### 0. Test Project - Action validation
+**Directory**: `examples/test-project/`
+
+A minimal AWD project used for testing the action in CI/CD. Great for understanding the basics:
+
+```yaml
+- uses: danielmeppiel/action-awd-cli@v1
+  with:
+    script: test-params
+    working-directory: examples/test-project
+    name: "Developer"
+    message: "Hello World"
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### 1. Issue Triage - Automatically label new issues
 **File**: `.github/workflows/issue-triage.yml`
 
