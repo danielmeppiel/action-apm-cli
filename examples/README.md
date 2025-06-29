@@ -2,6 +2,8 @@
 
 This directory contains real-world examples of AI workflows using the AWD Action.
 
+> **🔑 IMPORTANT**: All workflows require the `models: read` permission to access GitHub Models API. Without this, you'll get a 401 Unauthorized error.
+
 ## Quick Start Examples
 
 ### 0. Test Project - Action validation
@@ -10,14 +12,21 @@ This directory contains real-world examples of AI workflows using the AWD Action
 A minimal AWD project used for testing the action in CI/CD. Great for understanding the basics:
 
 ```yaml
-- uses: danielmeppiel/action-awd-cli@v1
-  with:
-    script: test-params
-    working-directory: examples/test-project
-    name: "Developer"
-    message: "Hello World"
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
+    steps:
+      - uses: actions/checkout@v4
+      - uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: test-params
+          working-directory: examples/test-project
+          name: "Developer"
+          message: "Hello World"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### 1. Issue Triage - Automatically label new issues
@@ -31,6 +40,8 @@ on:
 jobs:
   triage:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
       - uses: actions/checkout@v4
       - uses: danielmeppiel/action-awd-cli@v1
@@ -54,6 +65,8 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
       - uses: actions/checkout@v4
       - uses: danielmeppiel/action-awd-cli@v1
@@ -77,6 +90,8 @@ on:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
       - uses: actions/checkout@v4
       - uses: danielmeppiel/action-awd-cli@v1
@@ -153,6 +168,8 @@ on:
 jobs:
   ai-automation:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
       - uses: actions/checkout@v4
       
@@ -227,6 +244,8 @@ on:
 jobs:
   analyze:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     strategy:
       matrix:
         script: [codex-review, llm-review, security-scan]
@@ -257,6 +276,8 @@ on:
 jobs:
   smart-review:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
       - uses: actions/checkout@v4
       
@@ -292,6 +313,8 @@ on:
 jobs:
   ai-review:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
       - uses: actions/checkout@v4
       
@@ -331,6 +354,8 @@ on:
 jobs:
   advanced:
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
       - uses: actions/checkout@v4
       - uses: danielmeppiel/action-awd-cli@v1

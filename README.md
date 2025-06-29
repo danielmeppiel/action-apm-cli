@@ -1,62 +1,118 @@
 # AWD GitHub Action 🚀
-## Enabling Continuous AI with Markdown Workflows
+**Run AI workflows written in natural language markdown with AWD CLI**
 
 > **📖 [Full Documentation & Getting Started →](https://github.com/danielmeppiel/awd-cli)**
 
-GitHub Action for [AWD CLI](https://github.com/danielmeppiel/awd-cli) - bringing [Continuous AI](https://githubnext.com/projects/continuous-ai/) to your repositories through simple markdown workflows.
+Transform any repository into a Continuous AI powerhouse. Write AI workflows in markdown, test locally with `awd run`, deploy seamlessly with GitHub Actions.
 
-**Transform any repository into a Continuous AI powerhouse.** Write AI workflows in markdown, test locally with `awd run`, deploy seamlessly with GitHub Actions.
+## Quick Start (30 seconds)
 
-## Continuous AI Examples
-
-Enable these Continuous AI patterns with simple markdown workflows:
-
-### 🏷️ Continuous Triage
+### 1. Add to your workflow
 ```yaml
-- uses: danielmeppiel/action-awd-cli@v1
-  with:
-    script: issue-triage
-    issue_number: ${{ github.event.issue.number }}
-    max_labels: 3
-    focus: "bug vs feature categorization"
-    # ↑ These become: --param issue_number=123 --param max_labels=3 --param focus="bug vs feature categorization"
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+name: AI Workflow
+on: [issues]
+
+jobs:
+
+  ai-workflow:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read  # ⚠️ Required for GitHub Models API
+      
+    steps:
+      - uses: actions/checkout@v4
+      - uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: start
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### 📋 Continuous Documentation  
-```yaml
-- uses: danielmeppiel/action-awd-cli@v1
-  with:
-    script: update-docs
-    changed_files: ${{ steps.changes.outputs.files }}
-    format: "markdown"
+### 2. Create an AWD project
+```bash
+# In your repository root
+awd init .
+awd install
 ```
 
-### 🔍 Continuous Code Review
-```yaml
-- uses: danielmeppiel/action-awd-cli@v1
-  with:
-    script: code-review
-    pr_number: ${{ github.event.number }}
-    focus_areas: "security,performance"
+### 3. Test locally, deploy globally
+```bash
+awd run start --param issue_number=123
+# Works? Deploy with git push!
 ```
 
->## Why Continuous AI with AWD?
+## Prerequisites
 
-**Continuous AI** (from [GitHub Next](https://githubnext.com/projects/continuous-ai/)) is the automated application of AI to enhance software collaboration - just like CI/CD transformed deployment.
+- **AWD CLI project** in your repo (`awd.yml` + `.prompt.md` files)
+- **`GITHUB_TOKEN`** environment variable  
+- **GitHub Models API access** - Add `permissions: { models: read }` to your workflow
 
-AWD Action makes Continuous AI **accessible and maintainable**:
+> **🆘 Need help setting up?** See [AWD CLI Quick Start](https://github.com/danielmeppiel/awd-cli#quick-start-30-seconds)
 
-- ✅ **Markdown workflows** instead of complex TypeScript actions
-- ✅ **Local testing** with `awd run` before deployment  
-- ✅ **Event-driven automation** for issues, PRs, releases
-- ✅ **Team control** over AI models and workflows
-- ✅ **Auditable and transparent** AI automation
+## Examples
 
-> **📚 [Complete Examples & Tutorials →](https://github.com/danielmeppiel/awd-cli/tree/main/examples)**
+## Examples
 
-## Action Inputs & Outputs
+### Basic Issue Triage
+```yaml
+on: [issues]
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: issue-triage
+          issue_number: ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### PR Code Review  
+```yaml
+on: [pull_request]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: code-review
+          pr_number: ${{ github.event.number }}
+          focus_areas: "security,performance"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Documentation Updates
+```yaml
+on: 
+  push:
+    paths: ['src/**']
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: update-docs
+          changed_files: ${{ steps.changes.outputs.files }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+> **📚 [More Examples & Tutorials →](./examples/)**
+
+## Action Reference
 
 ### Inputs
 | Input | Description | Default |
@@ -66,7 +122,7 @@ AWD Action makes Continuous AI **accessible and maintainable**:
 | `working-directory` | Working directory for execution | `.` |
 | `skip-install` | Skip automatic MCP dependency installation | `false` |
 
-**All other inputs** are passed as `--param key=value` to your AWD script.
+**All other inputs** are automatically passed as `--param key=value` to your AWD script.
 
 ### Outputs
 | Output | Description |
@@ -74,19 +130,46 @@ AWD Action makes Continuous AI **accessible and maintainable**:
 | `success` | Whether execution succeeded (`true`/`false`) |
 | `output` | Full execution output from AWD |
 
-## Prerequisites
+## Why Continuous AI with AWD?
 
-Your repository needs an [AWD project](https://github.com/danielmeppiel/awd-cli#quick-start-30-seconds):
+**Continuous AI** is the automated application of AI to enhance software collaboration - just like CI/CD transformed deployment. 
+
+AWD Action makes it **accessible and maintainable**:
+
+- ✅ **Write workflows in markdown** instead of complex TypeScript
+- ✅ **Test locally** with `awd run` before deploying  
+- ✅ **Event-driven automation** for issues, PRs, releases
+- ✅ **Transparent and auditable** AI automation
+
+## Troubleshooting
+
+### Permission Denied (401 Unauthorized)
+```yaml
+# ❌ Missing permissions
+jobs:
+  ai-task:
+    runs-on: ubuntu-latest  # Missing permissions!
+    
+# ✅ Correct setup  
+jobs:
+  ai-task:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API
+```
+
+### AWD Project Not Found
+Make sure your repository has:
 - `awd.yml` configuration file
-- `.prompt.md` workflow files  
-- `GITHUB_TOKEN` environment variable
+- At least one `.prompt.md` workflow file
+- Run `awd init .` in your repo root if missing
 
 ## Links
 
-- **📖 [AWD CLI Documentation](https://github.com/danielmeppiel/awd-cli)** - Getting started, tutorials, examples
-- **🔧 [Action Examples](https://github.com/danielmeppiel/action-awd-cli/tree/main/examples)** - Real GitHub workflows
-- **🐛 [Issues](https://github.com/danielmeppiel/action-awd-cli/issues)** - Bug reports and feature requests
+- **📖 [AWD CLI Documentation](https://github.com/danielmeppiel/awd-cli)** - Complete guide and tutorials
+- **🔧 [Action Examples](./examples/)** - Real-world GitHub workflows  
+- **🐛 [Issues & Support](https://github.com/danielmeppiel/action-awd-cli/issues)** - Get help or report bugs
 
 ---
 
-*Enabling Continuous AI through markdown workflows* 🚀
+**Enabling Continuous AI through markdown workflows** 🚀

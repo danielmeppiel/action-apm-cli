@@ -32,6 +32,8 @@ jobs:
   integration-test:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      models: read  # Required for GitHub Models API access
     steps:
     - uses: actions/checkout@v4
     
