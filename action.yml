@@ -1,0 +1,27 @@
+name: 'AWD - AI Workflow Runner'
+description: 'Run AI workflows written in natural language with AWD CLI'
+author: 'AWD Team'
+branding:
+  icon: 'cpu'
+  color: 'purple'
+
+inputs:
+  script:
+    description: 'Script name from awd.yml to run (default: start)'
+    required: false
+    default: 'start'
+  working-directory:
+    description: 'Working directory for execution'
+    required: false
+    default: '.'
+  # Note: All other inputs are automatically passed as --param key=value to AWD
+
+outputs:
+  success:
+    description: 'Whether execution succeeded (true/false)'
+  output:
+    description: 'Full execution output from AWD'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

@@ -1,0 +1,41 @@
+{
+  "name": "action-awd-cli",
+  "version": "1.0.0",
+  "description": "GitHub Action for running AI workflows with AWD CLI",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/main.ts --license licenses.txt",
+    "package": "npm run build",
+    "test": "npm run build",
+    "all": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielmeppiel/action-awd-cli.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "awd",
+    "ai",
+    "llm",
+    "workflow",
+    "continuous-ai"
+  ],
+  "author": "Daniel Meppiel",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vercel/ncc": "^0.38.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-github": "^5.0.1",
+    "eslint-plugin-jest": "^28.6.0",
+    "typescript": "^5.5.2"
+  }
+}
