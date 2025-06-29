@@ -6,7 +6,38 @@
 
 Instead of building custom TypeScript actions for every AI task, write markdown prompts and let AWD handle the complexity. Same workflows work locally (`awd run`) and in GitHub Actions seamlessly.
 
+## Versioning Strategy
+
+### Action vs AWD CLI Versions
+
+This GitHub Action follows **independent versioning** from AWD CLI:
+
+- **Action versions**: `v1.0.0`, `v1.1.0`, etc. (semantic versioning)
+- **AWD CLI versions**: Automatically installs latest stable by default
+- **Version control**: Use `awd-version` input to pin specific AWD CLI versions
+
+```yaml
+- uses: danielmeppiel/action-awd-cli@v1
+  with:
+    awd-version: 'v0.1.0'  # Pin to specific AWD CLI version
+    # or
+    awd-version: 'latest'  # Use latest stable (default)
+```
+
+### Compatibility Matrix
+
+| Action Version | Default AWD CLI | Tested With |
+|----------------|-----------------|-------------|
+| v1.0.x         | latest stable   | v0.1.0+     |
+
+### When to Update
+
+- **Action updates**: New features, bug fixes, GitHub Actions improvements
+- **AWD CLI updates**: Automatically picked up (unless pinned)
+- **Breaking changes**: Major version bumps only
+
 ## Quick Start
+
 
 ```yaml
 # .github/workflows/ai-triage.yml

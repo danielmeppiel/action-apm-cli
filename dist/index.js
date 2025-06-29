@@ -25693,6 +25693,7 @@ class AwdInstaller {
      * Ensure AWD CLI is installed and available
      */
     async ensureAwdInstalled() {
+        const awdVersion = core.getInput('awd-version') || 'latest';
         try {
             // First check if AWD is already available
             const checkResult = await exec.exec('awd', ['--version'], {
@@ -25707,22 +25708,17 @@ class AwdInstaller {
         catch (error) {
             // AWD not found, need to install
         }
-        core.info('⬇️  Installing AWD CLI...');
+        core.info(`⬇️  Installing AWD CLI version: ${awdVersion}...`);
         try {
             // Install AWD using the official install script
-            await exec.exec('curl', [
-                '-sSL',
-                'https://raw.githubusercontent.com/danielmeppiel/awd-cli/main/install.sh'
-            ], {
-                listeners: {
-                    stdout: (data) => {
-                        // Pipe curl output to sh
-                        process.stdout.write(data);
-                    }
-                }
+            // The install script supports version selection via environment variable
+            const installEnv = {
+                ...process.env,
+                AWD_VERSION: awdVersion === 'latest' ? '' : awdVersion
+            };
+            await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/danielmeppiel/awd-cli/main/install.sh | sh'], {
+                env: installEnv
             });
-            // Alternative: Direct installation method
-            await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/danielmeppiel/awd-cli/main/install.sh | sh']);
             // Verify installation
             const verifyResult = await exec.exec('awd', ['--version'], {
                 ignoreReturnCode: true
