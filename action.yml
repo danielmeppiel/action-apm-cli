@@ -18,6 +18,10 @@ inputs:
     description: 'AWD CLI version to install (default: latest stable)'
     required: false
     default: 'latest'
+  skip-install:
+    description: 'Skip automatic MCP dependency installation (default: false)'
+    required: false
+    default: 'false'
   # Note: All other inputs are automatically passed as --param key=value to AWD
 
 outputs:

@@ -25837,8 +25837,25 @@ class AwdRunner {
                 core.info(`📁 Changing to working directory: ${workingDir}`);
                 process.chdir(workingDir);
             }
-            // 4. Gather parameters from all inputs
+            // 4. Install MCP dependencies (like npm install) - unless explicitly skipped
+            const skipInstall = core.getInput('skip-install') === 'true';
+            if (!skipInstall) {
+                core.info('📦 Installing MCP dependencies...');
+                await this.runAwdCommand('install', []);
+            }
+            else {
+                core.info('⏭️  Skipping MCP dependency installation');
+            }
+            // 5. Gather parameters from all inputs
             const script = core.getInput('script') || 'start';
+            // Handle special 'install' script case
+            if (script === 'install') {
+                core.info('✅ MCP dependencies installation completed');
+                return {
+                    success: true,
+                    output: 'Dependencies installed successfully'
+                };
+            }
             const params = this.paramHandler.gatherParameters();
             core.info(`🎯 Running AWD script: ${script}`);
             if (params.length > 0) {
@@ -25877,6 +25894,33 @@ class AwdRunner {
                 success: false,
                 output: message
             };
+        }
+    }
+    /**
+     * Helper method to run AWD commands with proper error handling
+     */
+    async runAwdCommand(command, args) {
+        const fullCommand = `awd ${command}`;
+        let output = '';
+        const options = {
+            listeners: {
+                stdout: (data) => {
+                    const text = data.toString();
+                    output += text;
+                    core.info(text.trim());
+                },
+                stderr: (data) => {
+                    const text = data.toString();
+                    output += text;
+                    core.warning(text.trim());
+                }
+            },
+            silent: false,
+            ignoreReturnCode: true
+        };
+        const exitCode = await exec.exec(fullCommand, args, options);
+        if (exitCode !== 0) {
+            throw new Error(`AWD command '${fullCommand}' failed with exit code ${exitCode}`);
         }
     }
 }

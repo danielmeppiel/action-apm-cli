@@ -64,6 +64,7 @@ AWD Action makes Continuous AI **accessible and maintainable**:
 | `script` | Script name from awd.yml to run | `start` |
 | `awd-version` | AWD CLI version to install | `latest` |
 | `working-directory` | Working directory for execution | `.` |
+| `skip-install` | Skip automatic MCP dependency installation | `false` |
 
 **All other inputs** are passed as `--param key=value` to your AWD script.
 

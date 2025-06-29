@@ -83,7 +83,10 @@ your-repo/
 │   ├── code-review.prompt.md        # PR analysis workflow
 │   ├── release-notes.prompt.md      # Release notes generation
 │   ├── security-scan.prompt.md      # Security analysis
-│   └── docs-update.prompt.md        # Documentation updates
+│   ├── docs-update.prompt.md        # Documentation updates
+│   ├── comprehensive-review.prompt.md # Deep code analysis
+│   ├── quick-review.prompt.md       # Surface-level review
+│   └── advanced-triage.prompt.md    # Advanced issue analysis
 └── .github/workflows/
     ├── issue-triage.yml             # Issue automation
     ├── code-review.yml              # PR automation  
@@ -101,9 +104,14 @@ author: Your Team
 scripts:
   issue-triage: "codex prompts/issue-triage.prompt.md"
   code-review: "codex prompts/code-review.prompt.md"
-  release-notes: "codex prompts/release-notes.prompt.md"
+  codex-review: "codex prompts/code-review.prompt.md"
+  llm-review: "llm prompts/code-review.prompt.md -m github/gpt-4o-mini"
   security-scan: "codex prompts/security-scan.prompt.md"
+  release-notes: "codex prompts/release-notes.prompt.md"
   docs-update: "codex prompts/docs-update.prompt.md"
+  comprehensive-review: "codex prompts/comprehensive-review.prompt.md"
+  quick-review: "codex prompts/quick-review.prompt.md"
+  advanced-triage: "codex prompts/advanced-triage.prompt.md"
 
 dependencies:
   mcp:
@@ -194,9 +202,9 @@ jobs:
 
 ## Advanced Examples
 
-### Matrix Strategy - Multiple Runtimes
+### Matrix Strategy - Multiple Scripts
 ```yaml
-name: Multi-Runtime Analysis
+name: Multi-Script Analysis
 on:
   pull_request:
     types: [opened]
@@ -205,14 +213,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        runtime: [codex, llm]
-        focus: [security, performance, style]
+        script: [codex-review, llm-review, security-scan]
+        include:
+          - script: codex-review
+            focus: "performance,maintainability"
+          - script: llm-review  
+            focus: "security,style"
+          - script: security-scan
+            focus: "vulnerabilities"
     steps:
       - uses: actions/checkout@v4
       - uses: danielmeppiel/action-awd-cli@v1
         with:
-          script: code-analysis
-          runtime: ${{ matrix.runtime }}
+          script: ${{ matrix.script }}
           focus_area: ${{ matrix.focus }}
           pr_number: ${{ github.event.number }}
         env:
@@ -254,6 +267,45 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### Separate Dependency Installation
+```yaml
+name: Advanced AI Setup
+on:
+  pull_request:
+    types: [opened]
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Install MCP dependencies once
+      - name: Setup AWD Dependencies
+        uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: install
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Run multiple scripts without reinstalling
+      - name: Security Review
+        uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: security-scan
+          skip-install: true
+          pr_number: ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Performance Review
+        uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: performance-review
+          skip-install: true
+          pr_number: ${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
 ### Custom Environment Variables
 ```yaml
 name: Advanced AI Workflow
@@ -270,7 +322,7 @@ jobs:
           script: advanced-triage
           issue_number: ${{ github.event.issue.number }}
           complexity: "high"
-          model: "gpt-4o"
+          # Note: Model selection is handled in the script definition in awd.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -354,7 +406,7 @@ Review pull request #${input:pr_number} with focus on: ${input:focus_areas}
 2. **Create AWD project** with `awd init`
 3. **Add prompt files** to your project
 4. **Configure awd.yml** with your scripts
-5. **Test locally** with `awd run script-name`
+5. **Test locally** with `awd run script-name --param key=value`
 6. **Commit and push** to trigger GitHub Actions
 
 ## Tips
