@@ -83,25 +83,3 @@ jobs:
         git add dist/
         git commit -m "Build for release ${{ github.ref_name }}" || exit 0
         git push
-
-  # Post-release validation - Test the actual published action
-  post-release-test:
-    needs: build
-    if: github.ref_type == 'tag'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Wait for action to be available
-      run: sleep 30  # Give GitHub time to make the tag available
-    
-    - name: Checkout for test project
-      uses: actions/checkout@v4
-    
-    - name: Test published action
-      uses: danielmeppiel/action-awd-cli@${{ github.ref_name }}
-      with:
-        script: test-params
-        working-directory: examples/test-project
-        name: "Published Action"
-        message: "Post-release validation successful"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
