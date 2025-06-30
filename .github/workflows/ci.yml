@@ -48,7 +48,7 @@ jobs:
         npm ci
         npm run build
     
-    # Test hybrid approach - JSON parameters + args (2 birds, 1 stone!)
+    # Test hybrid approach - JSON parameters (clean test!)
     - name: Test - Hybrid Parameters
       uses: ./  # Use the local action code
       with:
@@ -58,7 +58,6 @@ jobs:
           {
             "name": "GitHub Actions"
           }
-        args: '--debug --verbose'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

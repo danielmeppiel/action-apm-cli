@@ -58,7 +58,6 @@ jobs:
         "pr_number": "${{ github.event.number }}",
         "focus": "security"
       }
-    args: --debug
 ```
 
 ## Why Continuous AI?
@@ -76,7 +75,6 @@ jobs:
 |-------|-------------|---------|
 | `script` | AWD script to run | `start`, `review`, `analyze` |
 | `parameters` | JSON parameters for your script | `{"name": "value"}` |
-| `args` | Additional CLI flags | `--debug --verbose` |
 | `working-directory` | Where to run (if AWD project in subfolder) | `./ai-workflows` |
 
 ## Troubleshooting
