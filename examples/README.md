@@ -1,57 +1,144 @@
-# Example AWD Workflows for GitHub Actions
+# AWD GitHub Action Examples
 
-This directory contains real-world examples of AI workflows using the AWD Action.
+This directory contains real-world examples of using the AWD GitHub Action in different scenarios.
 
 > **🔑 IMPORTANT**: All workflows require the `models: read` permission to access GitHub Models API. Without this, you'll get a 401 Unauthorized error.
 
-## Quick Start Examples
+## Example Workflows
 
-### 0. Test Project - Action validation
-**Directory**: `examples/test-project/`
+### 1. Issue Triage and Labeling
 
-A minimal AWD project used for testing the action in CI/CD. Great for understanding the basics:
-
-```yaml
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    permissions:
-      models: read  # Required for GitHub Models API access
-    steps:
-      - uses: actions/checkout@v4
-      - uses: danielmeppiel/action-awd-cli@v1
-        with:
-          script: test-params
-          working-directory: examples/test-project
-          name: "Developer"
-          message: "Hello World"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-### 1. Issue Triage - Automatically label new issues
-**File**: `.github/workflows/issue-triage.yml`
+Automatically triage incoming issues and apply appropriate labels:
 
 ```yaml
-name: AI Issue Triage
+name: Issue Triage
 on:
   issues:
     types: [opened]
+
 jobs:
   triage:
     runs-on: ubuntu-latest
     permissions:
-      models: read  # Required for GitHub Models API access
+      issues: write
+      models: read
     steps:
       - uses: actions/checkout@v4
       - uses: danielmeppiel/action-awd-cli@v1
         with:
           script: issue-triage
-          issue_number: ${{ github.event.issue.number }}
-          max_labels: 3
-          focus: "bug vs feature categorization"
+          parameters: |
+            {
+              "issue_number": "${{ github.event.issue.number }}",
+              "issue_title": "${{ github.event.issue.title }}",
+              "issue_body": "${{ github.event.issue.body }}"
+            }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### 2. Pull Request Code Review
+
+Review pull requests and provide feedback:
+
+```yaml
+name: AI Code Review
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: code-review
+          parameters: |
+            {
+              "pr_number": "${{ github.event.number }}",
+              "pr_title": "${{ github.event.pull_request.title }}",
+              "author": "${{ github.event.pull_request.user.login }}"
+            }
+          args: --debug
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### 3. Test Project Example
+
+A minimal AWD project used for testing (from `examples/test-project/`):
+
+```yaml
+name: Test AWD Action
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: danielmeppiel/action-awd-cli@v1
+        with:
+          script: hello-world
+          working-directory: examples/test-project
+          parameters: |
+            {
+              "name": "Developer",
+              "message": "Hello World"
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Usage Patterns
+
+### Simple Parameters (Recommended for most cases)
+Use the `parameters` input with JSON for clean, readable workflows:
+- ✅ Easy to read and maintain
+- ✅ Supports GitHub expressions
+- ✅ No need to worry about shell escaping
+
+```yaml
+parameters: |
+  {
+    "model": "gpt-4",
+    "temperature": "0.8",
+    "issue_number": "${{ github.event.issue.number }}"
+  }
+```
+
+### Advanced Arguments (Power users)
+Use the `args` input for complex scenarios:
+- ✅ Maximum flexibility
+- ✅ Support for CLI flags and options
+- ✅ Direct AWD CLI argument passing
+
+```yaml
+args: --param model=gpt-4 --param temperature=0.8 --debug --verbose
+```
+
+### Hybrid Approach
+Combine both for the best of both worlds:
+- `parameters` for core workflow data
+- `args` for debugging flags and advanced options
+
+```yaml
+parameters: |
+  {
+    "pr_number": "${{ github.event.number }}",
+    "author": "${{ github.actor }}"
+  }
+args: --debug --verbose --output-format=json
 ```
 
 ### 2. Code Review - AI-powered PR analysis
@@ -72,9 +159,7 @@ jobs:
       - uses: danielmeppiel/action-awd-cli@v1
         with:
           script: code-review
-          pr_number: ${{ github.event.number }}
-          focus_areas: "security,performance"
-          max_comments: 5
+          args: '--param pr_number="${{ github.event.number }}" --param focus_areas="security,performance" --param max_comments=5'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -97,8 +182,7 @@ jobs:
       - uses: danielmeppiel/action-awd-cli@v1
         with:
           script: release-notes
-          version: ${{ github.event.release.tag_name }}
-          format: "markdown"
+          args: '--param version="${{ github.event.release.tag_name }}" --param format="markdown"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -179,9 +263,7 @@ jobs:
         uses: danielmeppiel/action-awd-cli@v1
         with:
           script: issue-triage
-          issue_number: ${{ github.event.issue.number }}
-          max_labels: 3
-          priority_detection: true
+          args: '--param issue_number="${{ github.event.issue.number }}" --param max_labels=3 --param priority_detection=true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -191,10 +273,7 @@ jobs:
         uses: danielmeppiel/action-awd-cli@v1
         with:
           script: code-review
-          pr_number: ${{ github.event.number }}
-          focus_areas: "security,performance,maintainability"
-          max_comments: 10
-          severity_threshold: "medium"
+          args: '--param pr_number="${{ github.event.number }}" --param focus_areas="security,performance,maintainability" --param max_comments=10 --param severity_threshold="medium"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -204,8 +283,7 @@ jobs:
         uses: danielmeppiel/action-awd-cli@v1
         with:
           script: security-scan
-          pr_number: ${{ github.event.number }}
-          scan_type: "comprehensive"
+          args: '--param pr_number="${{ github.event.number }}" --param scan_type="comprehensive"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -215,8 +293,7 @@ jobs:
         uses: danielmeppiel/action-awd-cli@v1
         with:
           script: docs-update
-          commit_sha: ${{ github.sha }}
-          auto_commit: false
+          args: '--param commit_sha="${{ github.sha }}" --param auto_commit=false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -226,9 +303,7 @@ jobs:
         uses: danielmeppiel/action-awd-cli@v1
         with:
           script: release-notes
-          version: ${{ github.event.release.tag_name }}
-          format: "markdown"
-          include_contributors: true
+          args: '--param version="${{ github.event.release.tag_name }}" --param format="markdown" --param include_contributors=true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -261,8 +336,7 @@ jobs:
       - uses: danielmeppiel/action-awd-cli@v1
         with:
           script: ${{ matrix.script }}
-          focus_area: ${{ matrix.focus }}
-          pr_number: ${{ github.event.number }}
+          args: '--param focus_area="${{ matrix.focus }}" --param pr_number="${{ github.event.number }}"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -287,8 +361,7 @@ jobs:
         uses: danielmeppiel/action-awd-cli@v1
         with:
           script: comprehensive-review
-          pr_number: ${{ github.event.number }}
-          depth: "deep"
+          args: '--param pr_number="${{ github.event.number }}" --param depth="deep"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -298,8 +371,7 @@ jobs:
         uses: danielmeppiel/action-awd-cli@v1
         with:
           script: quick-review
-          pr_number: ${{ github.event.number }}
-          depth: "surface"
+          args: '--param pr_number="${{ github.event.number }}" --param depth="surface"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -332,7 +404,7 @@ jobs:
         with:
           script: security-scan
           skip-install: true
-          pr_number: ${{ github.event.number }}
+          args: '--param pr_number="${{ github.event.number }}"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -341,7 +413,7 @@ jobs:
         with:
           script: performance-review
           skip-install: true
-          pr_number: ${{ github.event.number }}
+          args: '--param pr_number="${{ github.event.number }}"'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -361,8 +433,7 @@ jobs:
       - uses: danielmeppiel/action-awd-cli@v1
         with:
           script: advanced-triage
-          issue_number: ${{ github.event.issue.number }}
-          complexity: "high"
+          args: '--param issue_number="${{ github.event.issue.number }}" --param complexity="high"'
           # Note: Model selection is handled in the script definition in awd.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

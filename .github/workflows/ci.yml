@@ -48,14 +48,17 @@ jobs:
         npm ci
         npm run build
     
-    # One test to rule them all: debug mode + parameters + dependency installation
-    - name: Test - Complete Integration
+    # Test hybrid approach - JSON parameters + args (2 birds, 1 stone!)
+    - name: Test - Hybrid Parameters
       uses: ./  # Use the local action code
       with:
         script: test-all
         working-directory: examples/test-project
-        name: "GitHub Actions"
-        message: "Integration test successful"
+        parameters: |
+          {
+            "name": "GitHub Actions"
+          }
+        args: '--debug --verbose'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

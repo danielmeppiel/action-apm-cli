@@ -22,7 +22,14 @@ inputs:
     description: 'Skip automatic MCP dependency installation (default: false)'
     required: false
     default: 'false'
-  # Note: All other inputs are automatically passed as --param key=value to AWD
+  parameters:
+    description: 'JSON object containing parameters to pass to AWD (e.g., {"name": "world", "message": "Hello"})'
+    required: false
+    default: '{}'
+  args:
+    description: 'Additional CLI arguments for advanced use cases (e.g., "--debug --verbose --custom-flag")'
+    required: false
+    default: ''
 
 outputs:
   success:
