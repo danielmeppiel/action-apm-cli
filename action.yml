@@ -1,21 +1,21 @@
-name: 'AWD - AI Workflow Runner'
-description: 'Run AI workflows written in natural language with AWD CLI'
-author: 'AWD Team'
+name: 'APM - AI Workflow Runner'
+description: 'Run AI workflows written in natural language with APM CLI'
+author: 'APM Team'
 branding:
   icon: 'cpu'
   color: 'purple'
 
 inputs:
   script:
-    description: 'Script name from awd.yml to run (default: start)'
+    description: 'Script name from apm.yml to run (default: start)'
     required: false
     default: 'start'
   working-directory:
     description: 'Working directory for execution'
     required: false
     default: '.'
-  awd-version:
-    description: 'AWD CLI version to install (default: latest stable)'
+  apm-version:
+    description: 'APM CLI version to install (default: latest stable)'
     required: false
     default: 'latest'
   skip-install:
@@ -23,7 +23,7 @@ inputs:
     required: false
     default: 'false'
   parameters:
-    description: 'JSON object containing parameters to pass to AWD (e.g., {"name": "world", "message": "Hello"})'
+    description: 'JSON object containing parameters to pass to APM (e.g., {"name": "world", "message": "Hello"})'
     required: false
     default: '{}'
   args:
@@ -35,7 +35,7 @@ outputs:
   success:
     description: 'Whether execution succeeded (true/false)'
   output:
-    description: 'Full execution output from AWD'
+    description: 'Full execution output from APM'
 
 runs:
   using: 'node20'

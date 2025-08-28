@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
-import { AwdInstaller } from './awd-installer';
+import { AwdInstaller } from './apm-installer';
 import { ParameterHandler } from './parameter-handler';
 
 export interface ExecutionResult {
@@ -9,7 +9,7 @@ export interface ExecutionResult {
 }
 
 /**
- * Core AWD runner that handles installation, parameter processing, and execution
+ * Core APM runner that handles installation, parameter processing, and execution
  */
 export class AwdRunner {
   private installer: AwdInstaller;
@@ -21,12 +21,12 @@ export class AwdRunner {
   }
 
   /**
-   * Main execution flow for AWD workflows
+   * Main execution flow for APM workflows
    */
   async execute(): Promise<ExecutionResult> {
     try {
-      // 1. Install AWD CLI if not available
-      core.info('📦 Ensuring AWD CLI is installed...');
+      // 1. Install APM CLI if not available
+      core.info('📦 Ensuring APM CLI is installed...');
       await this.installer.ensureAwdInstalled();
 
       // 2. Setup runtime automatically
@@ -62,13 +62,13 @@ export class AwdRunner {
       }
       const params = this.paramHandler.gatherParameters();
       
-      core.info(`🎯 Running AWD script: ${script}`);
+      core.info(`🎯 Running APM script: ${script}`);
       if (params.length > 0) {
         core.info(`📋 Parameters: ${params.join(', ')}`);
       }
 
-      // 5. Execute AWD command
-      const command = `awd run ${script}`;
+      // 5. Execute APM command
+      const command = `apm run ${script}`;
       const args = params;
       
       let output = '';
@@ -98,7 +98,7 @@ export class AwdRunner {
 
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      core.error(`AWD execution failed: ${message}`);
+      core.error(`APM execution failed: ${message}`);
       return {
         success: false,
         output: message
@@ -107,10 +107,10 @@ export class AwdRunner {
   }
 
   /**
-   * Helper method to run AWD commands with proper error handling
+   * Helper method to run APM commands with proper error handling
    */
   private async runAwdCommand(command: string, args: string[]): Promise<void> {
-    const fullCommand = `awd ${command}`;
+    const fullCommand = `apm ${command}`;
     
     let output = '';
     const options = {
@@ -133,7 +133,7 @@ export class AwdRunner {
     const exitCode = await exec.exec(fullCommand, args, options);
     
     if (exitCode !== 0) {
-      throw new Error(`AWD command '${fullCommand}' failed with exit code ${exitCode}`);
+      throw new Error(`APM command '${fullCommand}' failed with exit code ${exitCode}`);
     }
   }
 }

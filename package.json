@@ -1,7 +1,7 @@
 {
-  "name": "action-awd-cli",
+  "name": "action-apm-cli",
   "version": "1.0.0",
-  "description": "GitHub Action for running AI workflows with AWD CLI",
+  "description": "GitHub Action for running AI workflows with APM CLI",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/main.ts --license licenses.txt",
@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielmeppiel/action-awd-cli.git"
+    "url": "git+https://github.com/danielmeppiel/action-apm-cli.git"
   },
   "keywords": [
     "actions",
     "node",
-    "awd",
+    "apm",
     "ai",
     "llm",
     "workflow",

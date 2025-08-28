@@ -1,12 +1,12 @@
 import * as core from '@actions/core';
-import { AwdRunner } from './awd-runner';
+import { AwdRunner } from './apm-runner';
 
 /**
- * Main entry point for the AWD GitHub Action
+ * Main entry point for the APM GitHub Action
  */
 async function run(): Promise<void> {
   try {
-    core.info('🚀 Starting AWD AI Workflow Runner...');
+    core.info('🚀 Starting APM AI Workflow Runner...');
     
     const runner = new AwdRunner();
     const result = await runner.execute();
@@ -16,13 +16,13 @@ async function run(): Promise<void> {
     core.setOutput('output', result.output);
     
     if (!result.success) {
-      core.setFailed('AWD workflow execution failed');
+      core.setFailed('APM workflow execution failed');
     } else {
-      core.info('✨ AWD workflow completed successfully!');
+      core.info('✨ APM workflow completed successfully!');
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    core.setFailed(`AWD Action failed: ${message}`);
+    core.setFailed(`APM Action failed: ${message}`);
   }
 }
 

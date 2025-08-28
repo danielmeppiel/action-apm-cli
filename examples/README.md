@@ -1,6 +1,6 @@
-# AWD GitHub Action Examples
+# APM GitHub Action Examples
 
-Real-world examples of using AWD GitHub Action for Continuous AI workflows.
+Real-world examples of using APM GitHub Action for Continuous AI workflows.
 
 > **🔑 IMPORTANT**: All workflows require the `models: read` permission to access GitHub Models API.
 
@@ -21,7 +21,7 @@ jobs:
       models: read
     steps:
       - uses: actions/checkout@v4
-      - uses: danielmeppiel/action-awd-cli@v1
+      - uses: danielmeppiel/action-apm-cli@v1
         with:
           script: issue-triage
           parameters: |
@@ -49,7 +49,7 @@ jobs:
       models: read
     steps:
       - uses: actions/checkout@v4
-      - uses: danielmeppiel/action-awd-cli@v1
+      - uses: danielmeppiel/action-apm-cli@v1
         with:
           script: code-review
           parameters: |
@@ -77,7 +77,7 @@ jobs:
       models: read
     steps:
       - uses: actions/checkout@v4
-      - uses: danielmeppiel/action-awd-cli@v1
+      - uses: danielmeppiel/action-apm-cli@v1
         with:
           script: release-notes
           parameters: |
@@ -92,11 +92,11 @@ jobs:
 ## Project Setup
 
 ### Required Files
-Your repository needs an AWD project with these files:
+Your repository needs an APM project with these files:
 
 ```
 your-repo/
-├── awd.yml                    # AWD configuration
+├── apm.yml                    # APM configuration
 ├── prompts/
 │   ├── issue-triage.prompt.md
 │   ├── code-review.prompt.md
@@ -105,7 +105,7 @@ your-repo/
     └── ai.yml                 # Your GitHub Actions workflow
 ```
 
-### Sample `awd.yml`
+### Sample `apm.yml`
 ```yaml
 name: my-ai-workflows
 version: 1.0.0
@@ -166,7 +166,7 @@ jobs:
       
       # Step 1: Quick analysis
       - name: Quick Review
-        uses: danielmeppiel/action-awd-cli@v1
+        uses: danielmeppiel/action-apm-cli@v1
         with:
           script: quick-review
           parameters: |
@@ -179,7 +179,7 @@ jobs:
       # Step 2: Security scan for large PRs
       - name: Security Review
         if: github.event.pull_request.additions > 100
-        uses: danielmeppiel/action-awd-cli@v1
+        uses: danielmeppiel/action-apm-cli@v1
         with:
           script: security-scan
           parameters: |
@@ -193,7 +193,7 @@ jobs:
 
 ### Different Working Directory
 ```yaml
-- uses: danielmeppiel/action-awd-cli@v1
+- uses: danielmeppiel/action-apm-cli@v1
   with:
     script: analyze
     working-directory: ./ai-workflows
@@ -205,20 +205,20 @@ jobs:
 
 ## Getting Started
 
-1. **Set up AWD project**: Run `awd init` in your repo
+1. **Set up APM project**: Run `apm init` in your repo
 2. **Create prompts**: Write your AI workflows in `.prompt.md` files
-3. **Test locally**: Use `awd run script-name --param key=value`
+3. **Test locally**: Use `apm run script-name --param key=value`
 4. **Deploy**: Add GitHub Actions workflow
 5. **Iterate**: Improve based on results
 
 ## Tips
 
 - **Start simple** with one workflow, expand gradually
-- **Test locally first** with `awd run` before deploying
+- **Test locally first** with `apm run` before deploying
 - **Use meaningful parameter names** for clarity
 - **Check Actions logs** for debugging
 - **Focus on one use case** per prompt for better results
 
 ---
 
-**[📖 AWD CLI Documentation](https://github.com/danielmeppiel/awd-cli)** • **[🐛 Report Issues](https://github.com/danielmeppiel/action-awd-cli/issues)**
+**[📖 APM CLI Documentation](https://github.com/danielmeppiel/apm-cli)** • **[🐛 Report Issues](https://github.com/danielmeppiel/action-apm-cli/issues)**

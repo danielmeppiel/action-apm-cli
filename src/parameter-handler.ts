@@ -1,13 +1,13 @@
 import * as core from '@actions/core';
 
 /**
- * Handles parameter processing for AWD workflows
+ * Handles parameter processing for APM workflows
  * Supports both JSON parameters (user-friendly) and raw CLI args (power users)
  */
 export class ParameterHandler {
   
   /**
-   * Gather all action inputs and convert to AWD CLI arguments
+   * Gather all action inputs and convert to APM CLI arguments
    * Supports hybrid approach: JSON parameters + additional CLI args
    */
   gatherParameters(): string[] {

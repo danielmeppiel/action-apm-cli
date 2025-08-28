@@ -1,7 +1,7 @@
 name: test-project
 version: 1.0.0
-description: A test-project AWD application
-author: AWD Team
+description: A test-project APM application
+author: APM Team
 
 scripts:
   start: "codex --skip-git-repo-check hello-world.prompt.md"

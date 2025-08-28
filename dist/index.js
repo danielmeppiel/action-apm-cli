@@ -25686,58 +25686,58 @@ exports.AwdInstaller = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 const exec = __importStar(__nccwpck_require__(5236));
 /**
- * Handles AWD CLI installation and runtime setup
+ * Handles APM CLI installation and runtime setup
  */
 class AwdInstaller {
     /**
-     * Ensure AWD CLI is installed and available
+     * Ensure APM CLI is installed and available
      */
     async ensureAwdInstalled() {
-        const awdVersion = core.getInput('awd-version') || 'latest';
+        const apmVersion = core.getInput('apm-version') || 'latest';
         try {
-            // First check if AWD is already available
-            const checkResult = await exec.exec('awd', ['--version'], {
+            // First check if APM is already available
+            const checkResult = await exec.exec('apm', ['--version'], {
                 ignoreReturnCode: true,
                 silent: true
             });
             if (checkResult === 0) {
-                core.info('✅ AWD CLI already installed');
+                core.info('✅ APM CLI already installed');
                 return;
             }
         }
         catch (error) {
-            // AWD not found, need to install
+            // APM not found, need to install
         }
-        core.info(`⬇️  Installing AWD CLI version: ${awdVersion}...`);
+        core.info(`⬇️  Installing APM CLI version: ${apmVersion}...`);
         try {
-            // Install AWD using the official install script
+            // Install APM using the official install script
             // The install script supports version selection via environment variable
             const installEnv = {
                 ...process.env,
-                AWD_VERSION: awdVersion === 'latest' ? '' : awdVersion
+                APM_VERSION: apmVersion === 'latest' ? '' : apmVersion
             };
-            await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/danielmeppiel/awd-cli/main/install.sh | sh'], {
+            await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/danielmeppiel/apm-cli/main/install.sh | sh'], {
                 env: installEnv
             });
-            // Add AWD to PATH if it's not already there
-            const awdPath = process.env.HOME + '/.awd/bin';
-            if (process.env.PATH && !process.env.PATH.includes(awdPath)) {
-                process.env.PATH = `${awdPath}:${process.env.PATH}`;
-                core.addPath(awdPath);
-                core.info(`📍 Added ${awdPath} to PATH`);
+            // Add APM to PATH if it's not already there
+            const apmPath = process.env.HOME + '/.apm/bin';
+            if (process.env.PATH && !process.env.PATH.includes(apmPath)) {
+                process.env.PATH = `${apmPath}:${process.env.PATH}`;
+                core.addPath(apmPath);
+                core.info(`📍 Added ${apmPath} to PATH`);
             }
             // Verify installation
-            const verifyResult = await exec.exec('awd', ['--version'], {
+            const verifyResult = await exec.exec('apm', ['--version'], {
                 ignoreReturnCode: true
             });
             if (verifyResult !== 0) {
-                throw new Error('AWD CLI installation verification failed');
+                throw new Error('APM CLI installation verification failed');
             }
-            core.info('✅ AWD CLI installed successfully');
+            core.info('✅ APM CLI installed successfully');
         }
         catch (error) {
             const message = error instanceof Error ? error.message : String(error);
-            throw new Error(`Failed to install AWD CLI: ${message}`);
+            throw new Error(`Failed to install APM CLI: ${message}`);
         }
     }
     /**
@@ -25746,7 +25746,7 @@ class AwdInstaller {
     async setupRuntime() {
         try {
             core.info('🤖 Setting up Codex runtime with GitHub Models...');
-            const result = await exec.exec('awd', ['runtime', 'setup', 'codex'], {
+            const result = await exec.exec('apm', ['runtime', 'setup', 'codex'], {
                 ignoreReturnCode: true,
                 env: {
                     ...process.env,
@@ -25756,8 +25756,8 @@ class AwdInstaller {
             });
             if (result === 0) {
                 core.info('✅ Runtime setup completed');
-                // Temporary workaround: Add AWD runtime directory to PATH for this session
-                // TODO: Remove this once https://github.com/danielmeppiel/awd-cli/issues/XXX is fixed
+                // Temporary workaround: Add APM runtime directory to PATH for this session
+                // TODO: Remove this once https://github.com/danielmeppiel/apm-cli/issues/XXX is fixed
                 await this.addAwdRuntimeToPath();
             }
             else {
@@ -25771,22 +25771,22 @@ class AwdInstaller {
         }
     }
     /**
-     * Temporary workaround: Add AWD runtime directory to PATH for the current session
+     * Temporary workaround: Add APM runtime directory to PATH for the current session
      * This fixes the issue where runtime binaries aren't available immediately after setup
-     * TODO: Remove this once AWD-CLI properly updates PATH in current session
+     * TODO: Remove this once APM-CLI properly updates PATH in current session
      */
     async addAwdRuntimeToPath() {
         try {
-            const awdRuntimePath = process.env.HOME + '/.awd/runtimes';
+            const apmRuntimePath = process.env.HOME + '/.apm/runtimes';
             // Add to current process PATH
-            if (process.env.PATH && !process.env.PATH.includes(awdRuntimePath)) {
-                process.env.PATH = `${awdRuntimePath}:${process.env.PATH}`;
-                core.addPath(awdRuntimePath);
-                core.info(`📍 Added ${awdRuntimePath} to PATH for runtime binaries`);
+            if (process.env.PATH && !process.env.PATH.includes(apmRuntimePath)) {
+                process.env.PATH = `${apmRuntimePath}:${process.env.PATH}`;
+                core.addPath(apmRuntimePath);
+                core.info(`📍 Added ${apmRuntimePath} to PATH for runtime binaries`);
             }
         }
         catch (error) {
-            core.warning(`Could not update PATH for AWD runtime: ${error}`);
+            core.warning(`Could not update PATH for APM runtime: ${error}`);
         }
     }
 }
@@ -25837,25 +25837,25 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AwdRunner = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 const exec = __importStar(__nccwpck_require__(5236));
-const awd_installer_1 = __nccwpck_require__(3918);
+const apm_installer_1 = __nccwpck_require__(3918);
 const parameter_handler_1 = __nccwpck_require__(7685);
 /**
- * Core AWD runner that handles installation, parameter processing, and execution
+ * Core APM runner that handles installation, parameter processing, and execution
  */
 class AwdRunner {
     installer;
     paramHandler;
     constructor() {
-        this.installer = new awd_installer_1.AwdInstaller();
+        this.installer = new apm_installer_1.AwdInstaller();
         this.paramHandler = new parameter_handler_1.ParameterHandler();
     }
     /**
-     * Main execution flow for AWD workflows
+     * Main execution flow for APM workflows
      */
     async execute() {
         try {
-            // 1. Install AWD CLI if not available
-            core.info('📦 Ensuring AWD CLI is installed...');
+            // 1. Install APM CLI if not available
+            core.info('📦 Ensuring APM CLI is installed...');
             await this.installer.ensureAwdInstalled();
             // 2. Setup runtime automatically
             core.info('⚙️  Setting up AI runtime...');
@@ -25886,12 +25886,12 @@ class AwdRunner {
                 };
             }
             const params = this.paramHandler.gatherParameters();
-            core.info(`🎯 Running AWD script: ${script}`);
+            core.info(`🎯 Running APM script: ${script}`);
             if (params.length > 0) {
                 core.info(`📋 Parameters: ${params.join(', ')}`);
             }
-            // 5. Execute AWD command
-            const command = `awd run ${script}`;
+            // 5. Execute APM command
+            const command = `apm run ${script}`;
             const args = params;
             let output = '';
             const options = {
@@ -25918,7 +25918,7 @@ class AwdRunner {
         }
         catch (error) {
             const message = error instanceof Error ? error.message : String(error);
-            core.error(`AWD execution failed: ${message}`);
+            core.error(`APM execution failed: ${message}`);
             return {
                 success: false,
                 output: message
@@ -25926,10 +25926,10 @@ class AwdRunner {
         }
     }
     /**
-     * Helper method to run AWD commands with proper error handling
+     * Helper method to run APM commands with proper error handling
      */
     async runAwdCommand(command, args) {
-        const fullCommand = `awd ${command}`;
+        const fullCommand = `apm ${command}`;
         let output = '';
         const options = {
             listeners: {
@@ -25949,7 +25949,7 @@ class AwdRunner {
         };
         const exitCode = await exec.exec(fullCommand, args, options);
         if (exitCode !== 0) {
-            throw new Error(`AWD command '${fullCommand}' failed with exit code ${exitCode}`);
+            throw new Error(`APM command '${fullCommand}' failed with exit code ${exitCode}`);
         }
     }
 }
@@ -25998,28 +25998,28 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
-const awd_runner_1 = __nccwpck_require__(3314);
+const apm_runner_1 = __nccwpck_require__(3314);
 /**
- * Main entry point for the AWD GitHub Action
+ * Main entry point for the APM GitHub Action
  */
 async function run() {
     try {
-        core.info('🚀 Starting AWD AI Workflow Runner...');
-        const runner = new awd_runner_1.AwdRunner();
+        core.info('🚀 Starting APM AI Workflow Runner...');
+        const runner = new apm_runner_1.AwdRunner();
         const result = await runner.execute();
         // Set outputs for downstream actions
         core.setOutput('success', result.success);
         core.setOutput('output', result.output);
         if (!result.success) {
-            core.setFailed('AWD workflow execution failed');
+            core.setFailed('APM workflow execution failed');
         }
         else {
-            core.info('✨ AWD workflow completed successfully!');
+            core.info('✨ APM workflow completed successfully!');
         }
     }
     catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        core.setFailed(`AWD Action failed: ${message}`);
+        core.setFailed(`APM Action failed: ${message}`);
     }
 }
 // Run the action
@@ -26070,12 +26070,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ParameterHandler = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 /**
- * Handles parameter processing for AWD workflows
+ * Handles parameter processing for APM workflows
  * Supports both JSON parameters (user-friendly) and raw CLI args (power users)
  */
 class ParameterHandler {
     /**
-     * Gather all action inputs and convert to AWD CLI arguments
+     * Gather all action inputs and convert to APM CLI arguments
      * Supports hybrid approach: JSON parameters + additional CLI args
      */
     gatherParameters() {

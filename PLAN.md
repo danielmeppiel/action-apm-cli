@@ -1,10 +1,10 @@
-# AWD GitHub Action: Continuous AI Made Simple
+# APM GitHub Action: Continuous AI Made Simple
 
 ## Strategic Vision
 
 **Transform GitHub Actions into the universal runtime for AI workflows.** 
 
-Instead of custom TypeScript actions for every AI task, developers write markdown prompts and let AWD handle the complexity. Same workflows work locally (`awd run`) and in CI/CD seamlessly. 
+Instead of custom TypeScript actions for every AI task, developers write markdown prompts and let APM handle the complexity. Same workflows work locally (`apm run`) and in CI/CD seamlessly. 
 
 ## The Opportunity
 
@@ -14,13 +14,13 @@ Instead of custom TypeScript actions for every AI task, developers write markdow
 - **No local testing** - commit-push-wait cycles
 - **Vendor lock-in** to specific LLM providers
 
-### AWD Solution: Dead Simple Universal Action
+### APM Solution: Dead Simple Universal Action
 ```yaml
 # Before: Custom action for each AI task (hundreds of lines of TypeScript)
 - uses: pelikhan/action-genai-issue-labeller@v0
 
-# After: Universal AWD action + reusable prompts (zero TypeScript)
-- uses: awd-action/run@v1
+# After: Universal APM action + reusable prompts (zero TypeScript)
+- uses: apm-action/run@v1
   with:
     script: issue-triage
     issue_number: ${{ github.event.issue.number }}
@@ -29,51 +29,51 @@ Instead of custom TypeScript actions for every AI task, developers write markdow
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-**The Magic**: Same `issue-triage` script works locally and in Actions thanks to AWD. Write your AI script once, in plain Mardkwon, and run anywhere - both locally and in CI.
+**The Magic**: Same `issue-triage` script works locally and in Actions thanks to APM. Write your AI script once, in plain Mardkwon, and run anywhere - both locally and in CI.
 
 ## Why This Will Succeed
 
-### 1. AWD is Already Production-Ready
+### 1. APM is Already Production-Ready
 - **Mature CLI** with cross-platform binaries (Linux, macOS)
 - **Automated runtime management** (codex/llm installation)
-- **NPM-like ecosystem** (`awd init`, `awd run`, `awd install`)
+- **NPM-like ecosystem** (`apm init`, `apm run`, `apm install`)
 - **GitHub Models integration** (free tier) 
 - **Comprehensive testing** in CI/CD
 
 ### 2. Ultra-Simple Implementation
-The action is just a **thin wrapper** around AWD's proven capabilities:
+The action is just a **thin wrapper** around APM's proven capabilities:
 
 ```typescript
 // The entire action (simplified)
 async function run() {
-  // 1. Install AWD (one command)
-  await exec.exec('curl -sSL https://install.awd.sh | sh');
+  // 1. Install APM (one command)
+  await exec.exec('curl -sSL https://install.apm.sh | sh');
   
   // 2. Setup runtime automatically  
-  await exec.exec('awd runtime setup codex');
+  await exec.exec('apm runtime setup codex');
   
   // 3. Run the script with parameters
   const script = core.getInput('script') || 'start';
   const params = gatherAllInputsAsParams();
-  await exec.exec(`awd run ${script} ${params.join(' ')}`);
+  await exec.exec(`apm run ${script} ${params.join(' ')}`);
 }
 ```
 
 ### 3. Immediate Ecosystem
-- **Works with existing AWD projects** (thousands of potential workflows)
+- **Works with existing APM projects** (thousands of potential workflows)
 - **Local development workflow** already established
-- **Community adoption** through AWD CLI users
+- **Community adoption** through APM CLI users
 
 ## Technical Architecture
 
 ### Dead Simple Action Design
 ```yaml
 # action.yml - Clean interface, no complex parameters
-name: 'AWD - AI Workflow Runner'
+name: 'APM - AI Workflow Runner'
 description: 'Run AI workflows with natural language prompts'
 inputs:
   script:
-    description: 'Script name from awd.yml (default: start)'
+    description: 'Script name from apm.yml (default: start)'
     default: 'start'
   working-directory:
     description: 'Working directory'
@@ -85,22 +85,22 @@ runs:
 ```
 
 ### Core Implementation Strategy
-**Leverage AWD's existing superpowers instead of reinventing:**
+**Leverage APM's existing superpowers instead of reinventing:**
 
-1. **Installation**: Use AWD's proven install script
-2. **Runtime Management**: Use AWD's automated setup
-3. **Execution**: Use AWD's script runner with parameter substitution
-4. **Error Handling**: Use AWD's rich error reporting
-5. **Output**: Stream AWD's real-time output to Actions logs
+1. **Installation**: Use APM's proven install script
+2. **Runtime Management**: Use APM's automated setup
+3. **Execution**: Use APM's script runner with parameter substitution
+4. **Error Handling**: Use APM's rich error reporting
+5. **Output**: Stream APM's real-time output to Actions logs
 
 ## Implementation Plan: Ship Fast, Learn Fast
 
 ### Phase 1: MVP Action (1-2 weeks)
-**Goal**: Working action that installs AWD and runs scripts
+**Goal**: Working action that installs APM and runs scripts
 
 **Week 1**: Core functionality
-- [ ] Create `awd-action` repository with TypeScript setup
-- [ ] Implement AWD installation and script execution
+- [ ] Create `apm-action` repository with TypeScript setup
+- [ ] Implement APM installation and script execution
 - [ ] Handle parameter passing (all inputs become `--param key=value`)
 - [ ] Basic error handling and output streaming
 
@@ -110,7 +110,7 @@ runs:
 - [ ] Test end-to-end with real GitHub workflows
 - [ ] Document the "Continuous AI" pattern
 
-**Deliverable**: Published GitHub Action that works with existing AWD projects
+**Deliverable**: Published GitHub Action that works with existing APM projects
 
 ### Phase 2: Ecosystem Examples (2-3 weeks)  
 **Goal**: Compelling use cases that drive adoption
@@ -146,7 +146,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: awd-action/run@v1
+      - uses: apm-action/run@v1
         with:
           script: issue-triage
           issue_number: ${{ github.event.issue.number }}
@@ -168,7 +168,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: awd-action/run@v1
+      - uses: apm-action/run@v1
         with:
           script: code-review
           pr_number: ${{ github.event.number }}
@@ -190,7 +190,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: awd-action/run@v1
+      - uses: apm-action/run@v1
         with:
           script: release-notes
           version: ${{ github.event.release.tag_name }}
@@ -223,14 +223,14 @@ jobs:
 
 **1. Timing**: AI workflows are exploding, but tooling is fragmented
 **2. Simplicity**: 10x easier than custom TypeScript actions  
-**3. Ecosystem**: AWD CLI already has proven adoption
+**3. Ecosystem**: APM CLI already has proven adoption
 **4. Portability**: Same workflows work locally and in CI/CD
 **5. Community**: Open source with network effects
 
 ## Risk Mitigation
 
 ### Technical Risks → Solutions
-- **AWD installation slow**: Pre-cache binaries, optimize install script
+- **APM installation slow**: Pre-cache binaries, optimize install script
 - **Action timeouts**: Implement proper timeouts and error handling  
 - **Runtime compatibility**: Extensive testing across platforms
 - **GitHub API limits**: Built-in rate limiting and retries
@@ -244,12 +244,12 @@ jobs:
 
 ### Repository Structure
 ```
-awd-action/
+apm-action/
 ├── action.yml           # GitHub Action metadata
 ├── dist/               # Compiled TypeScript 
 ├── src/
 │   ├── main.ts        # Entry point
-│   ├── installer.ts   # AWD CLI installation
+│   ├── installer.ts   # APM CLI installation
 │   ├── runner.ts      # Script execution  
 │   └── params.ts      # Parameter handling
 ├── examples/          # Working workflow examples
@@ -258,16 +258,16 @@ awd-action/
 
 ### Core Action Interface
 ```yaml
-name: 'AWD - AI Workflow Runner'
+name: 'APM - AI Workflow Runner'
 description: 'Run AI workflows written in natural language'
-author: 'AWD Team'
+author: 'APM Team'
 branding:
   icon: 'cpu'
   color: 'purple'
 
 inputs:
   script:
-    description: 'Script name from awd.yml (default: start)'
+    description: 'Script name from apm.yml (default: start)'
     default: 'start'
   working-directory:
     description: 'Working directory for execution'
@@ -288,10 +288,10 @@ runs:
 ## Next Steps: Execute Fast
 
 ### Week 1: Foundation
-1. **Create `awd-action` repository** with TypeScript GitHub Action template
-2. **Implement core functionality**: AWD installation + script execution
+1. **Create `apm-action` repository** with TypeScript GitHub Action template
+2. **Implement core functionality**: APM installation + script execution
 3. **Handle parameter mapping**: All action inputs → `--param key=value`  
-4. **Basic testing**: Verify with simple AWD project
+4. **Basic testing**: Verify with simple APM project
 
 ### Week 2: Ship & Iterate
 1. **Polish error handling** and output streaming
@@ -311,9 +311,9 @@ runs:
 
 ## Why This Changes Everything
 
-**Before AWD Action**: Each AI workflow requires custom TypeScript development, testing, and maintenance. Teams spend weeks building what should take minutes.
+**Before APM Action**: Each AI workflow requires custom TypeScript development, testing, and maintenance. Teams spend weeks building what should take minutes.
 
-**After AWD Action**: Teams write natural language prompts, test locally with `awd run`, then deploy to Actions with zero additional code.
+**After APM Action**: Teams write natural language prompts, test locally with `apm run`, then deploy to Actions with zero additional code.
 
 **The Result**: AI workflows become as easy to create and share as npm packages. GitHub Actions becomes the universal runtime for Continuous AI.
 
