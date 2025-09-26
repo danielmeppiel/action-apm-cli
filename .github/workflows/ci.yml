@@ -56,7 +56,7 @@ jobs:
         script: audit
         working-directory: examples/test-project
       env:
-        GITHUB_COPILOT_PAT: ${{ secrets.GITHUB_TOKEN }}  # Use GITHUB_TOKEN for testing
+        GITHUB_COPILOT_PAT: ${{ secrets.COPILOT_CLI_PAT }}  # Use GITHUB_TOKEN for testing
     
     # Test basic workflow for backwards compatibility
     - name: Test - Basic Workflow
@@ -65,7 +65,7 @@ jobs:
         script: start
         working-directory: examples/test-project
       env:
-        GITHUB_COPILOT_PAT: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_COPILOT_PAT: ${{ secrets.COPILOT_CLI_PAT }}
     
     # Validate end-to-end APM workflow (install -> compile -> run)
     - name: Validate - Complete APM Flow
