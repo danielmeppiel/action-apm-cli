@@ -1,6 +1,6 @@
-name: 'APM - AI Workflow Runner'
-description: 'Run APM workflows with dependency management, AGENTS.md compilation, and Copilot CLI integration'
-author: 'APM Team'
+name: 'APM - Agent Package Manager'
+description: 'Run Agents on Copilot or Codex CLI with agent dependency management and AGENTS.md context compilation'
+author: 'danielmeppiel'
 branding:
   icon: 'cpu'
   color: 'purple'
@@ -15,7 +15,7 @@ inputs:
     required: false
     default: '.'
   apm-version:
-    description: 'APM CLI version to install (default: latest stable)'
+    description: 'APM version to install (default: latest stable)'
     required: false
     default: 'latest'
   skip-install:
