@@ -25716,7 +25716,7 @@ class AwdInstaller {
                 ...process.env,
                 APM_VERSION: apmVersion === 'latest' ? '' : apmVersion
             };
-            await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/danielmeppiel/apm-cli/main/install.sh | sh'], {
+            await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/github/apm-cli/main/install.sh | sh'], {
                 env: installEnv
             });
             // Add APM to PATH if it's not already there
@@ -25757,7 +25757,7 @@ class AwdInstaller {
             if (result === 0) {
                 core.info('✅ Runtime setup completed');
                 // Temporary workaround: Add APM runtime directory to PATH for this session
-                // TODO: Remove this once https://github.com/danielmeppiel/apm-cli/issues/XXX is fixed
+                // TODO: Remove this once https://github.com/github/apm-cli/issues/XXX is fixed
                 await this.addAwdRuntimeToPath();
             }
             else {

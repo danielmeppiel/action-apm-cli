@@ -20,14 +20,14 @@ export class AwdInstaller {
       });
       
       if (checkResult === 0) {
-        core.info('✅ APM CLI already installed');
+        core.info('✅ APM already installed');
         return;
       }
     } catch (error) {
       // APM not found, need to install
     }
 
-    core.info(`⬇️  Installing APM CLI version: ${apmVersion}...`);
+    core.info(`⬇️  Installing APM version: ${apmVersion}...`);
     
     try {
       // Install APM using the official install script
@@ -37,7 +37,7 @@ export class AwdInstaller {
         APM_VERSION: apmVersion === 'latest' ? '' : apmVersion
       };
 
-      await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/danielmeppiel/apm-cli/main/install.sh | sh'], {
+      await exec.exec('sh', ['-c', 'curl -sSL https://raw.githubusercontent.com/danielmeppiel/apm/main/install.sh | sh'], {
         env: installEnv
       });
       
@@ -55,46 +55,46 @@ export class AwdInstaller {
       });
       
       if (verifyResult !== 0) {
-        throw new Error('APM CLI installation verification failed');
+        throw new Error('APM installation verification failed');
       }
       
-      core.info('✅ APM CLI installed successfully');
+      core.info('✅ APM installed successfully');
       
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to install APM CLI: ${message}`);
+      throw new Error(`Failed to install APM: ${message}`);
     }
   }
 
   /**
-   * Setup AI runtime (codex by default)
+   * Setup AI runtime (Copilot CLI by default)
    */
   async setupRuntime(): Promise<void> {
     try {
-      core.info('🤖 Setting up Codex runtime with GitHub Models...');
+      core.info('🤖 Setting up Copilot CLI runtime...');
       
-      const result = await exec.exec('apm', ['runtime', 'setup', 'codex'], {
+      const result = await exec.exec('apm', ['runtime', 'setup', 'copilot'], {
         ignoreReturnCode: true,
         env: {
           ...process.env,
-          // Ensure GITHUB_TOKEN is available for runtime setup
-          GITHUB_TOKEN: process.env.GITHUB_TOKEN || core.getInput('github_token') || ''
+          // Use GITHUB_COPILOT_PAT for Copilot CLI authentication
+          GITHUB_COPILOT_PAT: process.env.GITHUB_COPILOT_PAT || ''
         }
       });
       
       if (result === 0) {
-        core.info('✅ Runtime setup completed');
+        core.info('✅ Copilot CLI runtime setup completed');
         
         // Temporary workaround: Add APM runtime directory to PATH for this session
-        // TODO: Remove this once https://github.com/danielmeppiel/apm-cli/issues/XXX is fixed
+        // TODO: Remove this once https://github.com/danielmeppiel/apm/issues/XXX is fixed
         await this.addAwdRuntimeToPath();
       } else {
-        core.warning('⚠️  Runtime setup had issues but continuing...');
+        core.warning('⚠️  Copilot CLI runtime setup had issues but continuing...');
       }
       
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      core.warning(`Runtime setup warning: ${message}`);
+      core.warning(`Copilot CLI runtime setup warning: ${message}`);
       // Don't fail the action for runtime setup issues
     }
   }

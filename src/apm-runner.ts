@@ -40,24 +40,28 @@ export class AwdRunner {
         process.chdir(workingDir);
       }
 
-      // 4. Install MCP dependencies (like npm install) - unless explicitly skipped
+      // 4. Install APM and MCP dependencies - unless explicitly skipped
       const skipInstall = core.getInput('skip-install') === 'true';
       if (!skipInstall) {
-        core.info('📦 Installing MCP dependencies...');
+        core.info('📦 Installing APM and MCP dependencies...');
         await this.runAwdCommand('install', []);
+        
+        // 5. Compile AGENTS.md for agent compatibility
+        core.info('🔄 Compiling AGENTS.md from dependencies...');
+        await this.runAwdCommand('compile', []);
       } else {
-        core.info('⏭️  Skipping MCP dependency installation');
+        core.info('⏭️  Skipping dependency installation and compilation');
       }
 
-      // 5. Gather parameters from all inputs
+      // 6. Gather parameters from all inputs
       const script = core.getInput('script') || 'start';
       
       // Handle special 'install' script case
       if (script === 'install') {
-        core.info('✅ MCP dependencies installation completed');
+        core.info('✅ APM dependencies installation and compilation completed');
         return {
           success: true,
-          output: 'Dependencies installed successfully'
+          output: 'Dependencies installed and AGENTS.md compiled successfully'
         };
       }
       const params = this.paramHandler.gatherParameters();
@@ -67,7 +71,7 @@ export class AwdRunner {
         core.info(`📋 Parameters: ${params.join(', ')}`);
       }
 
-      // 5. Execute APM command
+      // 7. Execute APM command
       const command = `apm run ${script}`;
       const args = params;
       

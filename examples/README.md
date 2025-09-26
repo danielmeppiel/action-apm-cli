@@ -21,7 +21,7 @@ jobs:
       models: read
     steps:
       - uses: actions/checkout@v4
-      - uses: danielmeppiel/action-apm-cli@v1
+      - uses: github/action-apm-cli@v1
         with:
           script: issue-triage
           parameters: |
@@ -49,7 +49,7 @@ jobs:
       models: read
     steps:
       - uses: actions/checkout@v4
-      - uses: danielmeppiel/action-apm-cli@v1
+      - uses: github/action-apm-cli@v1
         with:
           script: code-review
           parameters: |
@@ -77,7 +77,7 @@ jobs:
       models: read
     steps:
       - uses: actions/checkout@v4
-      - uses: danielmeppiel/action-apm-cli@v1
+      - uses: github/action-apm-cli@v1
         with:
           script: release-notes
           parameters: |
@@ -166,7 +166,7 @@ jobs:
       
       # Step 1: Quick analysis
       - name: Quick Review
-        uses: danielmeppiel/action-apm-cli@v1
+        uses: github/action-apm-cli@v1
         with:
           script: quick-review
           parameters: |
@@ -179,7 +179,7 @@ jobs:
       # Step 2: Security scan for large PRs
       - name: Security Review
         if: github.event.pull_request.additions > 100
-        uses: danielmeppiel/action-apm-cli@v1
+        uses: github/action-apm-cli@v1
         with:
           script: security-scan
           parameters: |
@@ -193,7 +193,7 @@ jobs:
 
 ### Different Working Directory
 ```yaml
-- uses: danielmeppiel/action-apm-cli@v1
+- uses: github/action-apm-cli@v1
   with:
     script: analyze
     working-directory: ./ai-workflows
@@ -221,4 +221,4 @@ jobs:
 
 ---
 
-**[📖 APM CLI Documentation](https://github.com/danielmeppiel/apm-cli)** • **[🐛 Report Issues](https://github.com/danielmeppiel/action-apm-cli/issues)**
+**[📖 APM CLI Documentation](https://github.com/github/apm-cli)** • **[🐛 Report Issues](https://github.com/github/action-apm-cli/issues)**

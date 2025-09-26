@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielmeppiel/action-apm-cli.git"
+    "url": "git+https://github.com/github/action-apm-cli.git"
   },
   "keywords": [
     "actions",

@@ -1,5 +1,5 @@
 name: 'APM - AI Workflow Runner'
-description: 'Run AI workflows written in natural language with APM CLI'
+description: 'Run APM workflows with dependency management, AGENTS.md compilation, and Copilot CLI integration'
 author: 'APM Team'
 branding:
   icon: 'cpu'

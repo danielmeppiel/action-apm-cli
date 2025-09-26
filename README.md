@@ -1,92 +1,109 @@
 # APM GitHub Action 🚀
-**Write AI workflows in markdown, not custom GitHub Actions.**
+**Run APM workflows in GitHub Actions with full dependency management**
 
-> **🔧 Powered by [APM CLI](https://github.com/danielmeppiel/apm-cli)** - The package manager for Agentic Workflows written in markdown
+> **🔧 Powered by [APM CLI](https://github.com/danielmeppiel/apm)** - Agent Package Manager
 
-Enable [Continuous AI](https://githubnext.com/projects/continuous-ai/) in your repository. Test locally with `apm run`, deploy confidently with GitHub Actions.
+Enable AI-native development workflows in CI/CD. Automatic APM dependency resolution, AGENTS.md compilation, and Copilot CLI integration.
 
-## Quick Start (30 seconds)
+## Quick Start - Corporate Website Audit
 
-**Copy this into `.github/workflows/ai.yml`:**
+**Copy this into `.github/workflows/compliance.yml`:**
 
 ```yaml
-name: AI Issue Triage
-on: [issues]
+name: Compliance Audit
+on: [push, pull_request]
 
 jobs:
-  triage:
+  audit:
     runs-on: ubuntu-latest
-    permissions:
-      models: read
     steps:
       - uses: actions/checkout@v4
       - uses: danielmeppiel/action-apm-cli@v1
         with:
-          script: start
-          parameters: |
-            {
-              "issue_number": "${{ github.event.issue.number }}"
-            }
+          script: audit
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_COPILOT_PAT: ${{ secrets.GITHUB_COPILOT_PAT }}
 ```
 
-**That's it.** Open an issue to see AI triage in action.
+**That's it.** This runs the compliance audit workflow from [corporate-website](https://github.com/danielmeppiel/corporate-website), including:
+- ✅ Automatic APM dependency installation (`danielmeppiel/compliance-rules`, `danielmeppiel/design-guidelines`)
+- ✅ AGENTS.md compilation for agent compatibility
+- ✅ Full GDPR compliance checking with audit trails
 
-> **Want custom workflows?** [Install APM CLI](https://github.com/danielmeppiel/apm-cli) to create your own markdown AI workflows.
+## Real-World Example: Corporate Website
 
-## Examples
+See the complete setup at [danielmeppiel/corporate-website](https://github.com/danielmeppiel/corporate-website):
 
-**Issue Analysis:**
+**`apm.yml`:**
 ```yaml
-- uses: danielmeppiel/action-apm-cli@v1
-  with:
-    script: analyze
-    parameters: |
-      {
-        "issue_number": "${{ github.event.issue.number }}"
-      }
+name: corporate-website
+dependencies:
+  apm:
+    - danielmeppiel/compliance-rules
+    - danielmeppiel/design-guidelines
+  mcp:
+    - microsoft/playwright-mcp
+
+scripts:
+  audit: "copilot --log-level all --log-dir copilot-logs --allow-all-tools -p compliance-audit.prompt.md"
+  gdpr-check: "copilot --log-level all --log-dir copilot-logs --allow-all-tools -p gdpr-assessment.prompt.md"
+  accessibility: "copilot --log-level all --log-dir copilot-logs --allow-all-tools -p accessibility-audit.prompt.md"
 ```
 
-**PR Review with Custom Parameters:**
+**Workflow triggers:**
 ```yaml
-- uses: danielmeppiel/action-apm-cli@v1
+# Full compliance suite on PR
+- uses: danielmeppiel/action-awd-cli@v1
   with:
-    script: review
-    parameters: |
-      {
-        "pr_number": "${{ github.event.number }}",
-        "focus": "security"
-      }
+    script: audit
+
+# GDPR-specific check
+- uses: danielmeppiel/action-awd-cli@v1
+  with:
+    script: gdpr-check
+    
+# Accessibility validation
+- uses: danielmeppiel/action-awd-cli@v1
+  with:
+    script: accessibility
 ```
 
-## Why Continuous AI?
+## What This Action Does
 
-**[Continuous AI](https://githubnext.com/projects/continuous-ai/)** applies AI to enhance software collaboration - just like CI/CD transformed deployment. APM Action makes it accessible:
-
-- ✅ **One action, many workflows** - No need to build separate GitHub Actions for each AI script
-- ✅ **Local-to-CI sync** - Test with `apm run` locally, deploy confidently with GitHub Actions
-- ✅ **Write in markdown** - Portable AI workflows that run anywhere APM CLI works
-- ✅ **Event-driven automation** - Trigger on issues, PRs, releases, any GitHub event
+1. 🚀 **Installs APM CLI** - Latest stable version
+2. 🤖 **Sets up Copilot CLI** - Modern AI runtime with GITHUB_COPILOT_PAT
+3. 📦 **Installs Dependencies** - Both APM packages and MCP servers from `apm.yml`
+4. 🔄 **Compiles AGENTS.md** - Generates agent-compatible context from dependencies
+5. ▶️ **Runs Workflow** - Executes your APM script with full context
 
 ## Inputs
 
-| Input | Description | Example |
-|-------|-------------|---------|
-| `script` | APM script to run | `start`, `review`, `analyze` |
-| `parameters` | JSON parameters for your script | `{"name": "value"}` |
-| `working-directory` | Where to run (if APM project in subfolder) | `./ai-workflows` |
+| Input | Description | Default | Example |
+|-------|-------------|---------|----------|
+| `script` | APM script from apm.yml to run | `start` | `audit`, `gdpr-check` |
+| `working-directory` | Directory containing apm.yml | `.` | `./workflows` |
+| `apm-version` | APM CLI version to install | `latest` | `0.4.1` |
+| `skip-install` | Skip dependency installation | `false` | `true` |
 
-## Troubleshooting
+## Environment Variables
 
-**❌ Permission denied?** Add this to your job:
-```yaml
-permissions:
-  models: read  # Required for GitHub Models API
-```
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GITHUB_COPILOT_PAT` | Fine-grained PAT with Copilot access | Yes |
+| `GITHUB_APM_PAT` | PAT for private APM dependencies | No |
 
-**❌ Script not found?** Your repo needs an APM project. [Set one up →](https://github.com/danielmeppiel/apm-cli#quick-start-30-seconds)
+## Setup Requirements
+
+1. **Get GitHub Copilot PAT**: [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new)
+   - Select "Fine-grained personal access token"
+   - Add Copilot CLI access permissions
+
+2. **Add to Repository Secrets**: `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
+   - Name: `GITHUB_COPILOT_PAT`
+   - Value: Your fine-grained token
+
+3. **Create apm.yml** in your repository root (see corporate-website example)
 
 ---
 
-**[📖 APM CLI Documentation](https://github.com/danielmeppiel/apm-cli)** • **[🐛 Issues](https://github.com/danielmeppiel/action-apm-cli/issues)**
+**[📖 APM CLI Documentation](https://github.com/danielmeppiel/apm)** • **[🏢 Corporate Website Example](https://github.com/danielmeppiel/corporate-website)** • **[🐛 Issues](https://github.com/danielmeppiel/action-awd-cli/issues)**

@@ -9,14 +9,14 @@ An APM (Agent Primitives Manager) application.
 apm install
 
 # Run the hello world prompt
-apm run --param name="Developer"
+apm run --param name="<YourGitHubHandle>"
 
 # Preview before execution
-apm preview --param name="Developer"
+apm preview --param name="<YourGitHubHandle>"
 ```
 
 ## About
 
 This project was created with APM - The NPM for AI-Native Development.
 
-Learn more at: https://github.com/danielmeppiel/apm-cli
+Learn more at: https://github.com/github/apm-cli
