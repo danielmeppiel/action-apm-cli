@@ -81,15 +81,15 @@ export class AwdRunner {
           stdout: (data: Buffer) => {
             const text = data.toString();
             output += text;
-            core.info(text.trim());
+            // Let GitHub Actions handle the logging automatically
           },
           stderr: (data: Buffer) => {
             const text = data.toString();
             output += text;
-            core.warning(text.trim());
+            // Let GitHub Actions handle the logging automatically
           }
         },
-        silent: false,
+        silent: false,  // GitHub Actions will automatically log stdout/stderr
         ignoreReturnCode: true
       };
 
@@ -122,12 +122,12 @@ export class AwdRunner {
         stdout: (data: Buffer) => {
           const text = data.toString();
           output += text;
-          core.info(text.trim());
+          // Let GitHub Actions handle the logging automatically
         },
         stderr: (data: Buffer) => {
           const text = data.toString();
           output += text;
-          core.warning(text.trim());
+          // Let GitHub Actions handle the logging automatically
         }
       },
       silent: false,
