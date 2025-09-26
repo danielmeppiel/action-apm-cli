@@ -76,6 +76,15 @@ jobs:
         path: examples/test-project/copilot-logs/
         retention-days: 30
     
+    # Upload MCP configuration for debugging
+    - name: Upload MCP Configuration
+      uses: actions/upload-artifact@v4
+      if: always()  # Upload config even if tests failed
+      with:
+        name: mcp-config
+        path: ~/.copilot/mcp-config.json
+        retention-days: 30
+    
     # Validate end-to-end APM workflow (install -> compile -> run)
     - name: Validate - Complete APM Flow
       run: |
