@@ -1,0 +1,15 @@
+name: test-project
+version: 1.0.0
+description: Test project for APM compliance workflows
+author: APM Team
+
+scripts:
+  audit: "copilot --log-level all --log-dir copilot-logs --allow-all-tools -p audit-workflow.prompt.md"
+  start: "copilot -p hello-world.prompt.md"
+  test-all: "copilot -p hello-world.prompt.md"
+
+dependencies:
+  apm:
+    - danielmeppiel/compliance-rules
+  mcp:
+    - microsoft/playwright-mcp

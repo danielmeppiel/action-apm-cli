@@ -53,17 +53,17 @@ scripts:
 **Workflow triggers:**
 ```yaml
 # Full compliance suite on PR
-- uses: danielmeppiel/action-awd-cli@v1
-  with:
-    script: audit
+      - uses: danielmeppiel/action-apm-cli@v1
+        with:
+          script: audit
 
 # GDPR-specific check
-- uses: danielmeppiel/action-awd-cli@v1
+- uses: danielmeppiel/action-apm-cli@v1
   with:
     script: gdpr-check
     
 # Accessibility validation
-- uses: danielmeppiel/action-awd-cli@v1
+- uses: danielmeppiel/action-apm-cli@v1
   with:
     script: accessibility
 ```
@@ -106,4 +106,4 @@ scripts:
 
 ---
 
-**[📖 APM CLI Documentation](https://github.com/danielmeppiel/apm)** • **[🏢 Corporate Website Example](https://github.com/danielmeppiel/corporate-website)** • **[🐛 Issues](https://github.com/danielmeppiel/action-awd-cli/issues)**
+**[📖 APM CLI Documentation](https://github.com/danielmeppiel/apm)** • **[🏢 Corporate Website Example](https://github.com/danielmeppiel/corporate-website)** • **[🐛 Issues](https://github.com/danielmeppiel/action-apm-cli/issues)**

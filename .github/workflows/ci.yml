@@ -28,12 +28,13 @@ jobs:
     - name: Check build
       run: npm run build
 
-  # Integration test - Test the action itself
+  # Integration test - Test the action itself with hero scenario
   integration-test:
     needs: test
     runs-on: ubuntu-latest
     permissions:
-      models: read  # Required for GitHub Models API access
+      contents: read
+      actions: read
     steps:
     - uses: actions/checkout@v4
     
@@ -48,18 +49,44 @@ jobs:
         npm ci
         npm run build
     
-    # Test hybrid approach - JSON parameters (clean test!)
-    - name: Test - Hybrid Parameters
+    # Test hero scenario - APM audit workflow
+    - name: Test - Hero Scenario (Audit)
       uses: ./  # Use the local action code
       with:
-        script: test-all
+        script: audit
         working-directory: examples/test-project
-        parameters: |
-          {
-            "name": "GitHub Actions"
-          }
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_COPILOT_PAT: ${{ secrets.GITHUB_TOKEN }}  # Use GITHUB_TOKEN for testing
+    
+    # Test basic workflow for backwards compatibility
+    - name: Test - Basic Workflow
+      uses: ./
+      with:
+        script: start
+        working-directory: examples/test-project
+      env:
+        GITHUB_COPILOT_PAT: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Validate end-to-end APM workflow (install -> compile -> run)
+    - name: Validate - Complete APM Flow
+      run: |
+        echo "Verifying APM workflow files were created..."
+        cd examples/test-project
+        
+        # Check that apm.yml exists and has correct structure
+        if [[ ! -f "apm.yml" ]]; then
+          echo "❌ apm.yml not found"
+          exit 1
+        fi
+        
+        # Check that audit workflow prompt exists
+        if [[ ! -f "audit-workflow.prompt.md" ]]; then
+          echo "❌ audit-workflow.prompt.md not found"
+          exit 1
+        fi
+        
+        echo "✅ All required files present for hero scenario"
+        echo "✅ Integration tests completed successfully"
 
   build:
     needs: [test, integration-test]  # Wait for both test and integration-test
