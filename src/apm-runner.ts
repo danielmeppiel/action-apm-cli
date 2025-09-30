@@ -90,7 +90,13 @@ export class AwdRunner {
           }
         },
         silent: false,  // GitHub Actions will automatically log stdout/stderr
-        ignoreReturnCode: true
+        ignoreReturnCode: true,
+        env: {
+          ...process.env,
+          // GitHub Actions-specific: Required for Copilot CLI MCP server loading
+          XDG_CONFIG_HOME: process.env.HOME || '/home/runner',
+          COPILOT_AGENT_RUNNER_TYPE: 'STANDALONE'
+        }
       };
 
       const exitCode = await exec.exec(command, args, options);
@@ -131,7 +137,13 @@ export class AwdRunner {
         }
       },
       silent: false,
-      ignoreReturnCode: true
+      ignoreReturnCode: true,
+      env: {
+        ...process.env,
+        // GitHub Actions-specific: Required for Copilot CLI MCP server loading
+        XDG_CONFIG_HOME: process.env.HOME || '/home/runner',
+        COPILOT_AGENT_RUNNER_TYPE: 'STANDALONE'
+      }
     };
 
     const exitCode = await exec.exec(fullCommand, args, options);
